@@ -26,17 +26,17 @@ export default function ModeSelect() {
         onChange={handleChange}
       >
         <MenuItem value={'light'}>
-          <Box sx={{ display: 'flex', alignItems: 'center', color: 'primary.main', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', color: 'primary.main', gap: 0.5 }}>
             <LightModeIcon fontSize='small' />Light
           </Box>
         </MenuItem>
         <MenuItem value={'dark'}>
-          <Box sx={{ display: 'flex', alignItems: 'center', color: 'primary.main', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', color: 'primary.main', gap: 0.5 }}>
             <DarkModeIcon fontSize='small' />Dark
           </Box>
         </MenuItem>
         <MenuItem value={'system'}>
-          <Box sx={{ display: 'flex', alignItems: 'center', color: 'primary.main', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', color: 'primary.main', gap: 0.5 }}>
             <SettingsBrightnessIcon fontSize='small' />System
           </Box>
         </MenuItem>
