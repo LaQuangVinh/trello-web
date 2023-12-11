@@ -11,6 +11,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import AccountMenu from '~/components/Menus/AccountMenu'
+import AddIcon from '@mui/icons-material/Add'
 
 export default function AppBar() {
   return (
@@ -24,18 +25,10 @@ export default function AppBar() {
         color: 'primary.main',
         overflowX: 'auto'
       }}>
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2
-        }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <AppsIcon />
 
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5
-          }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
 
             <AutoAwesomeMosaicIcon />
 
@@ -57,16 +50,12 @@ export default function AppBar() {
             <MenuExpand>
               Templates
             </MenuExpand>
-            <Button variant="outlined">Create</Button>
+            <Button variant="outlined" startIcon={<AddIcon />}>Create</Button>
           </Box>
 
         </Box>
 
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2
-        }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
 
           <TextField sx={{ minWidth: 120 }} id="outlined-search" label="Search ..." type="search" size="small" />
 
