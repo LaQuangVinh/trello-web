@@ -4,8 +4,8 @@ import { cyan, pink, orange, red } from '@mui/material/colors'
 // Create a theme instance.
 const theme = extendTheme({
   trello: {
-    appBarHeight: '48px',
-    boardBarHeight: '58px'
+    appBarHeight: '56px',
+    boardBarHeight: '64px'
   },
   colorSchemes: {
     light: {
@@ -19,6 +19,15 @@ const theme = extendTheme({
         primary: cyan,
         secondary: orange
       }
+    }
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: `
+        * {
+           text-transform: none !important;
+        }
+      `
     }
   }
 })
