@@ -21,14 +21,15 @@ export default function AppBar() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        color: 'primary.main'
+        color: 'primary.main',
+        overflowX: 'auto'
       }}>
         <Box sx={{
           display: 'flex',
           alignItems: 'center',
           gap: 2
         }}>
-          <AppsIcon sx={{}} />
+          <AppsIcon />
 
           <Box sx={{
             display: 'flex',
@@ -43,20 +44,21 @@ export default function AppBar() {
             </Typography>
           </Box>
 
-          <MenuExpand>
-            Workspaces
-          </MenuExpand>
-          <MenuExpand>
-            Recent
-          </MenuExpand>
-          <MenuExpand>
-            Starred
-          </MenuExpand>
-          <MenuExpand>
-            Templates
-          </MenuExpand>
-
-          <Button variant="outlined">Create</Button>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+            <MenuExpand>
+              Workspaces
+            </MenuExpand>
+            <MenuExpand>
+              Recent
+            </MenuExpand>
+            <MenuExpand>
+              Starred
+            </MenuExpand>
+            <MenuExpand>
+              Templates
+            </MenuExpand>
+            <Button variant="outlined">Create</Button>
+          </Box>
 
         </Box>
 
@@ -66,7 +68,7 @@ export default function AppBar() {
           gap: 2
         }}>
 
-          <TextField id="outlined-search" label="Search ..." type="search" size="small" />
+          <TextField sx={{ minWidth: 120 }} id="outlined-search" label="Search ..." type="search" size="small" />
 
           <ModeSelect />
 

@@ -22,6 +22,29 @@ const theme = extendTheme({
     }
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          '*::-webkit-scrollbar': {
+            borderRadius: '0px',
+            width: '8px',
+            height: '8px'
+          },
+          '*::-webkit-scrollbar-thumb': {
+            borderRadius: '4px',
+            backgroundColor: 'rgba(22, 24, 35, .06)'
+          },
+          '*::-webkit-scrollbar-thumb:hover': {
+            borderRadius: '4px',
+            backgroundColor: 'rgba(22, 24, 35, .1)'
+          },
+          '*::-webkit-scrollbar-track': {
+            borderRadius: '0px',
+            backgroundColor: 'rgba(0, 0, 0, 0)'
+          }
+        }
+      }
+    },
     MuiButton: {
       styleOverrides: {
         // Name of the slot
