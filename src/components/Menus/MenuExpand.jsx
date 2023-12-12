@@ -64,6 +64,7 @@ export default function MenuExpand({ children }) {
   return (
     <div>
       <Button
+        sx={{ color: 'white' }}
         id="demo-customized-button"
         aria-controls={open ? 'demo-customized-menu' : undefined}
         aria-haspopup="true"

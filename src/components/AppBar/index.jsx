@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Box from '@mui/material/Box'
 import ModeSelect from '~/components/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -12,17 +13,23 @@ import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import AccountMenu from '~/components/Menus/AccountMenu'
 import AddIcon from '@mui/icons-material/Add'
+import InputAdornment from '@mui/material/InputAdornment'
+import SearchIcon from '@mui/icons-material/Search'
+import CloseIcon from '@mui/icons-material/Close'
 
 export default function AppBar() {
+  const [searchValue, setSearchValue] = useState('')
+
   return (
     <>
       <Box px={ 2 } sx={{
+        bgcolor: (theme) => theme.palette.mode == 'light' ? '#6c5ce7' : '#2d3436',
         height: (theme) => theme.trello.appBarHeight,
         width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        color: 'primary.main',
+        color: 'white',
         overflowX: 'auto'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -50,19 +57,67 @@ export default function AppBar() {
             <MenuExpand>
               Templates
             </MenuExpand>
-            <Button variant="outlined" startIcon={<AddIcon />}>Create</Button>
+            <Button sx={{ color: 'white', borderColor: 'transparent', '&:hover': { borderColor: 'transparent' } }} variant="outlined" startIcon={<AddIcon />}>Create</Button>
           </Box>
 
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{
+          '& fieldset': {
+            borderColor: 'white'
+          },
+          '& label': {
+            color: 'white'
+          },
+          '& label.Mui-focused': {
+            color: 'white'
+          },
+          '& input': {
+            color: 'white'
+          },
+          '.MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: 'white'
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: 'white'
+            }
+          },
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2
+        }}>
 
-          <TextField sx={{ minWidth: 120 }} id="outlined-search" label="Search ..." type="search" size="small" />
+          <TextField
+            sx={{
+              minWidth: 120
+            }}
+            id="outlined-search" label="Search"
+            size="small"
+            value={ searchValue }
+            onChange={(e) => setSearchValue(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: 'white' }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <CloseIcon
+                    onClick={() => setSearchValue('')}
+                    fontSize='small'
+                    sx={{ cursor: 'pointer', color: searchValue ? 'white' : (theme) => theme.palette.mode == 'light' ? '#6c5ce7' : '#2d3436' }}
+                  />
+                </InputAdornment>
+              )
+            }}
+          />
 
           <ModeSelect />
 
           <Tooltip title="Notification">
-            <Badge color="secondary" variant="dot" invisible={false}>
+            <Badge color="warning" variant="dot" invisible={false}>
               <NotificationsNoneIcon />
             </Badge>
           </Tooltip>

@@ -19,9 +19,9 @@ export default function BoardBar() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        borderTop: '1px solid #e55039',
         paddingX: 2,
-        overflowX: 'auto'
+        overflowX: 'auto',
+        bgcolor: (theme) => theme.palette.mode == 'light' ? '#0984e3' : '#2c3e50'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconChip Icon={ <DashboardIcon /> }>
@@ -42,7 +42,7 @@ export default function BoardBar() {
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Button variant="outlined" startIcon={<PersonAddIcon />}>Invite</Button>
+          <Button sx={{ color: 'white', borderColor: 'white', '&:hover': { borderColor: 'white' } }} variant="outlined" startIcon={<PersonAddIcon />}>Invite</Button>
           <AvatarGroup sx={{ '& .MuiAvatar-root': { height: '32px', width: '32px' } }} max={7}>
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
