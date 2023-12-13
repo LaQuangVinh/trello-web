@@ -43,7 +43,7 @@ export default function BoardBar() {
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Button sx={{ color: 'white', borderColor: 'white', '&:hover': { borderColor: 'white' } }} variant="outlined" startIcon={<PersonAddIcon />}>Invite</Button>
-          <AvatarGroup sx={{ '& .MuiAvatar-root': { height: '32px', width: '32px' } }} max={7}>
+          <AvatarGroup sx={{ '& .MuiAvatar-root': { height: '32px', width: '32px', color: 'white', borderColor: 'white' } }} max={7}>
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
             <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />

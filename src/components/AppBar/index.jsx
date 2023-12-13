@@ -23,7 +23,7 @@ export default function AppBar() {
   return (
     <>
       <Box px={ 2 } sx={{
-        bgcolor: (theme) => theme.palette.mode == 'light' ? '#6c5ce7' : '#2d3436',
+        bgcolor: (theme) => theme.palette.mode == 'light' ? '#00a8ff' : '#2d3436',
         height: (theme) => theme.trello.appBarHeight,
         width: '100%',
         display: 'flex',
@@ -107,7 +107,7 @@ export default function AppBar() {
                   <CloseIcon
                     onClick={() => setSearchValue('')}
                     fontSize='small'
-                    sx={{ cursor: 'pointer', color: searchValue ? 'white' : (theme) => theme.palette.mode == 'light' ? '#6c5ce7' : '#2d3436' }}
+                    sx={{ cursor: 'pointer', color: searchValue ? 'white' : (theme) => theme.palette.mode == 'light' ? '#00a8ff' : '#2d3436' }}
                   />
                 </InputAdornment>
               )
