@@ -8,26 +8,32 @@ import GroupIcon from '@mui/icons-material/Group'
 import CommentIcon from '@mui/icons-material/Comment'
 import LinkIcon from '@mui/icons-material/Link'
 
-export default function CardFull() {
+export default function CardFull({ card }) {
+  const shouldShowCardAction = () => {
+    return !!card?.memberIds.length || !!card?.comments.length || !!card?.attachments.length
+  }
   return (
     <Card sx={{ maxWidth: 345, overflow: 'unset' }}>
-      <CardMedia
-        sx={{ height: 140 }}
-        image="https://mui.com/static/images/cards/contemplative-reptile.jpg"
-        title="green iguana"
-      />
+      {card?.cover &&
+        <CardMedia
+          sx={{ height: 140 }}
+          image={card?.cover}
+        />
+      }
       <CardContent sx={{
         paddingBottom: 0
       }}>
         <Typography>
-          Lizard
+          {card.title}
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button size="small" startIcon={ <GroupIcon /> }>23</Button>
-        <Button size="small" startIcon={ <CommentIcon /> }>22</Button>
-        <Button size="small" startIcon={ <LinkIcon /> }>12</Button>
-      </CardActions>
+      {shouldShowCardAction() &&
+        <CardActions>
+          {!!card?.memberIds.length && <Button size="small" startIcon={ <GroupIcon /> }>{card?.memberIds.length}</Button> }
+          {!!card?.comments.length && <Button size="small" startIcon={ <CommentIcon /> }>{card?.comments.length}</Button> }
+          {!!card?.attachments.length && <Button size="small" startIcon={ <LinkIcon /> }>{card?.attachments.length}</Button> }
+        </CardActions>
+      }
     </Card>
   )
 }

@@ -9,8 +9,9 @@ import Avatar from '@mui/material/Avatar'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { capitalizeFirstLetter } from '~/utils/formatter'
 
-export default function BoardBar() {
+export default function BoardBar({ board }) {
   return (
     <>
       <Box sx={{
@@ -25,10 +26,10 @@ export default function BoardBar() {
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconChip Icon={ <DashboardIcon /> }>
-            vinh muốn học giỏi
+            {board.title}
           </IconChip>
           <IconChip Icon={ <VpnLockIcon /> }>
-            Public/Private Workspaces
+            {capitalizeFirstLetter(board.type)}
           </IconChip>
           <IconChip Icon={ <AddToDriveIcon /> }>
             Add To Google Drive

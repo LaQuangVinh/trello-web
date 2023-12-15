@@ -1,15 +1,16 @@
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-import MenuExpand from '~/components/Menus/MenuExpand'
-import DragHandleIcon from '@mui/icons-material/DragHandle'
-import Button from '@mui/material/Button'
 import AddCardIcon from '@mui/icons-material/AddCard'
+import DragHandleIcon from '@mui/icons-material/DragHandle'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import CardFull from '~/components/Cards/CardFull'
-import CardOnlyTitle from '~/components/Cards/CardOnlyTitle'
+import MenuExpand from '~/components/Menus/MenuExpand'
+import { mapOrder } from '~/utils/sorts'
 
 const HEADER_FOOTER_COLUMN_HEIGHT = '40px'
 
-function BoardContentItem() {
+function BoardContentItem({ column }) {
+  const orderedCard = mapOrder(column?.cards, column?.cardOrderIds, '_id')
   return (
     <Box sx={{
       bgcolor: (theme) => theme.palette.mode == 'light' ? '#55efc4' : '#84817a',
@@ -29,7 +30,7 @@ function BoardContentItem() {
           color: 'var(--mui-palette-text-primary)'
         }
       }}>
-        <Typography>Header</Typography>
+        <Typography>{column?.title}</Typography>
         <MenuExpand />
       </Box>
 
@@ -37,7 +38,7 @@ function BoardContentItem() {
         display: 'flex',
         flexDirection: 'column',
         gap: 1,
-        p: '20px 5px',
+        p: '0 5px',
         m: '0 5px',
         overflowX: 'hidden',
         overflowY: 'auto !important',
@@ -46,15 +47,7 @@ function BoardContentItem() {
           p: 1.5
         }
       }}>
-        <CardFull />
-        <CardOnlyTitle />
-        <CardOnlyTitle />
-        <CardOnlyTitle />
-        <CardOnlyTitle />
-        <CardOnlyTitle />
-        <CardOnlyTitle />
-        <CardOnlyTitle />
-        <CardOnlyTitle />
+        {orderedCard?.map(card => <CardFull key={card._id} card={card} />)}
       </Box>
 
       <Box sx={{
