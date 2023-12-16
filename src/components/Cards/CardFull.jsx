@@ -7,13 +7,34 @@ import Typography from '@mui/material/Typography'
 import GroupIcon from '@mui/icons-material/Group'
 import CommentIcon from '@mui/icons-material/Comment'
 import LinkIcon from '@mui/icons-material/Link'
+import { CSS } from '@dnd-kit/utilities'
+import { useSortable } from '@dnd-kit/sortable'
 
 export default function CardFull({ card }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: card._id,
+    data: { ...card }
+  })
+
+  const dndKitCardStyles = {
+    touchAction: 'none', //dòng này là để fix 1 chút lỗi khi kéo thả trên mobile
+    transform: CSS.Translate.toString(transform), //default trên doc là CSS.Transform.toString(transform) nhưng dùng thế nó sẽ bị stretch
+    transition,
+    opacity: isDragging ? '0.5' : undefined
+  }
   const shouldShowCardAction = () => {
     return !!card?.memberIds.length || !!card?.comments.length || !!card?.attachments.length
   }
   return (
-    <Card sx={{ maxWidth: 345, overflow: 'unset' }}>
+    <Card
+      ref={setNodeRef}
+      style={dndKitCardStyles}
+      {...attributes}
+      {...listeners}
+      sx={{
+        maxWidth: 345,
+        overflow: 'unset'
+      }}>
       {card?.cover &&
         <CardMedia
           sx={{ height: 140 }}

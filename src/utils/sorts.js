@@ -25,6 +25,19 @@ export const mapOrder = (originalArray, orderArray, key) => {
   return orderedArray
 }
 
+export function changeLocationArray(arr, index1, index2) {
+
+  const a = [...arr]
+
+  // Lưu giữ giá trị của phần tử tại index2 và loại nó ra khỏi mảng
+  const removedElement = a.splice(index2, 1)[0]
+
+  // Chèn phần tử đó vào index1
+  a.splice(index1, 0, removedElement)
+
+  return a
+}
+
 /**
 
 const originalItems = [
