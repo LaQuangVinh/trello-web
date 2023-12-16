@@ -71,8 +71,8 @@ function BoardContentItem({ column }) {
             p: 1.5
           }
         }}>
-          <SortableContext items={orderedCard.map(c => c._id)} strategy={verticalListSortingStrategy}>
-            {orderedCard?.map(card => <CardFull key={card._id} card={card} />)}
+          <SortableContext items={orderedCard.map(c => c?._id)} strategy={verticalListSortingStrategy}>
+            {orderedCard?.map(card => <CardFull key={card?._id} card={card} />)}
           </SortableContext>
         </Box>
 

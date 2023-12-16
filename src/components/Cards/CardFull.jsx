@@ -12,12 +12,12 @@ import { useSortable } from '@dnd-kit/sortable'
 
 export default function CardFull({ card }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: card._id,
+    id: card?._id,
     data: { ...card }
   })
 
   const dndKitCardStyles = {
-    touchAction: 'none', //dòng này là để fix 1 chút lỗi khi kéo thả trên mobile
+    //touchAction: 'none', //dòng này là để fix 1 chút lỗi khi kéo thả trên mobile
     transform: CSS.Translate.toString(transform), //default trên doc là CSS.Transform.toString(transform) nhưng dùng thế nó sẽ bị stretch
     transition,
     opacity: isDragging ? '0.5' : undefined
@@ -45,7 +45,7 @@ export default function CardFull({ card }) {
         paddingBottom: 0
       }}>
         <Typography>
-          {card.title}
+          {card?.title}
         </Typography>
       </CardContent>
       {shouldShowCardAction() &&
