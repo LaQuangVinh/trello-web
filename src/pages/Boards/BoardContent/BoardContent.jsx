@@ -3,10 +3,10 @@ import BoardContentItem from './BoardContentItem'
 import IconChip from '~/components/Chips/IconChip'
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 import { mapOrder } from '~/utils/sorts'
-import { DndContext, useSensor, useSensors, MouseSensor, TouchSensor, DragOverlay, defaultDropAnimationSideEffects, closestCorners } from '@dnd-kit/core' //PointerSensor lười thì dùng cái này cho nhanh
+import { DndContext, useSensor, useSensors, MouseSensor, TouchSensor, DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, rectIntersection, getFirstCollision, closestCenter } from '@dnd-kit/core' //PointerSensor lười thì dùng cái này cho nhanh
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 // import { arrayMove } from '@dnd-kit/sortable'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { changeLocationArray } from '~/utils/sorts'
 import CardFull from '~/components/Cards/CardFull'
 import { cloneDeep } from 'lodash'
@@ -36,6 +36,8 @@ export default function BoardContent({ board }) {
   const [activeDragType, setActiveDragType] = useState(null)
   const [activeDragData, setActiveDragData] = useState(null)
   const [oldColumnWhenDragging, setOldColumnWhenDragging] = useState(null)
+
+  const lastOverId = useRef(null)
 
   useEffect(() => {
     const orderedColumns = mapOrder(board?.columns, board?.columnOrderIds, '_id')
@@ -123,7 +125,7 @@ export default function BoardContent({ board }) {
     // xử lí khi thả card
     if ( activeDragType === ACTIVE_DRAG_IEM_TYPE.CARD) {
       //tìm id card
-      const { id: activeDraggingCardId, data: { current: activeDraggingCardData } } = active
+      const { id: activeDraggingCardId } = active
       const { id: overCardId } = over
 
       //tìm column
@@ -195,8 +197,37 @@ export default function BoardContent({ board }) {
     })
   }
 
+  const collisionDetectionStrategy = useCallback((args) => {
+    if (activeDragType === ACTIVE_DRAG_IEM_TYPE.COLUMN) {
+      return closestCorners({ ...args })
+    }
+
+    const pointerIntersections = pointerWithin(args)
+
+    const intersections = !!pointerIntersections.length ? pointerIntersections : rectIntersection(args)
+
+    let overId = getFirstCollision(intersections, 'id')
+
+    const checkColumn = orderedColumnsState.find(column => column._id === overId)
+    if (overId) {
+
+      if (checkColumn) {
+        console.log('aaa', overId);
+        overId = closestCenter({
+          ...args,
+          droppableContainers: args.droppableContainers.filter(container => container._id !== overId && checkColumn?.cardOrderIds?.includes(container.id))
+        })[0]?.id
+        console.log('bbb', overId);
+      }
+      lastOverId.current = overId
+      return [{ id: overId }]
+    }
+
+    return lastOverId.current ? [{ id: lastOverId.current }] : []
+  }, [activeDragType, orderedColumnsState])
+
   return (
-    <DndContext collisionDetection={closestCorners} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd} sensors={sensors}>
+    <DndContext collisionDetection={collisionDetectionStrategy} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd} sensors={sensors}>
       <Box sx={{
         height: (theme) => theme.trello.boardContentHeight,
         width: '100%',
