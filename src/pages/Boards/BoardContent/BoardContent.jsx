@@ -35,6 +35,7 @@ export default function BoardContent({ board }) {
   const [activeDragId, setActiveDragId] = useState(null)
   const [activeDragType, setActiveDragType] = useState(null)
   const [activeDragData, setActiveDragData] = useState(null)
+  const [oldColumnWhenDragging, setOldColumnWhenDragging] = useState(null)
 
   useEffect(() => {
     const orderedColumns = mapOrder(board?.columns, board?.columnOrderIds, '_id')
@@ -51,6 +52,10 @@ export default function BoardContent({ board }) {
     setActiveDragId(e?.active?.id)
     setActiveDragType(e?.active?.data?.current?.columnId ? ACTIVE_DRAG_IEM_TYPE.CARD : ACTIVE_DRAG_IEM_TYPE.COLUMN)
     setActiveDragData(e?.active?.data?.current)
+
+    if (e?.active?.data?.current?.columnId) {
+      setOldColumnWhenDragging(findColumnById(e?.active?.id))
+    }
   }
 
   //trigger đang kéo
@@ -68,18 +73,19 @@ export default function BoardContent({ board }) {
     const overColumn = findColumnById(overCardId)
     const activeColumn = findColumnById(activeDraggingCardId)
     if (!activeColumn || !overColumn) return
+
     if ( activeColumn._id !== overColumn._id) {
       setOrderedColumnsState(prevColumns => {
         const overCardIndex = overColumn?.cards?.findIndex(c => c._id === overCardId)
 
+        //khúc này là để tìm vị trí mới cho card được kéo trong cột mới
         let newCardIndex
         const isBelowOverItem = active.rect.current.translated &&
         active.rect.current.translated.top > over.rect.top + over.rect.height
-
         const modifier = isBelowOverItem ? 1 : 0
-
         newCardIndex = overCardIndex >= 0 ? overCardIndex + modifier : overColumn?.cards.length + 1
 
+        //clone
         const nextColumns = cloneDeep(prevColumns)
         const nextActiveColumn = nextColumns.find(column => column._id === activeColumn._id)
         const nextOverColumn = nextColumns.find(column => column._id === overColumn._id)
@@ -90,8 +96,16 @@ export default function BoardContent({ board }) {
         }
 
         if (nextOverColumn) {
-          nextOverColumn.cards = nextOverColumn.cards.filter(column => column._id !== activeDraggingCardId)
-          nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, activeDraggingCardData)
+          nextOverColumn.cards = nextOverColumn.cards.filter(column => column._id !== activeDraggingCardId) //code theo TrungQuanDev chứ dòng này cũng chưa biết để làm gì
+
+          const reBuild_activeDraggingCardData = {
+
+            ...activeDraggingCardData,
+            columnId: overColumn._id
+
+          }
+
+          nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, reBuild_activeDraggingCardData)
           nextOverColumn.cardOrderIds = nextOverColumn.cards.map(column => column._id)
         }
 
@@ -102,24 +116,73 @@ export default function BoardContent({ board }) {
 
   //trigger kết thúc kéo
   const handleDragEnd = (e) => {
-
-    if ( activeDragType === ACTIVE_DRAG_IEM_TYPE.CARD) return
-
     const { active, over } = e
 
     if (!over) return
 
-    if (active.id !== over.id) {
-      //lây index của 2 column đổi chỗ
-      const oldId = orderedColumnsState.findIndex(r => r._id === active.id)
-      const newId = orderedColumnsState.findIndex(r => r._id === over.id)
-      const dndOrderColumns = changeLocationArray(orderedColumnsState, newId, oldId)
-      setOrderedColumnsState(dndOrderColumns)
+    // xử lí khi thả card
+    if ( activeDragType === ACTIVE_DRAG_IEM_TYPE.CARD) {
+      //tìm id card
+      const { id: activeDraggingCardId, data: { current: activeDraggingCardData } } = active
+      const { id: overCardId } = over
+
+      //tìm column
+      const overColumn = findColumnById(overCardId)
+      const activeColumn = findColumnById(activeDraggingCardId)
+      if (!activeColumn || !overColumn) return
+
+      //kéo thả giữa 2 cột
+      if ( oldColumnWhenDragging._id !== overColumn._id) {
+        const oldCardIndex = oldColumnWhenDragging?.cards.findIndex(r => r._id === activeDragId)
+        const newCardIndex = overColumn?.cards.findIndex(r => r._id === overCardId)
+        const dndOrderCards = changeLocationArray(overColumn?.cards, newCardIndex, oldCardIndex)
+        setOrderedColumnsState(prevColumns => {
+          const nextColumns = cloneDeep(prevColumns)
+          const targetColumn = nextColumns.find(r => r._id === overColumn._id)
+          // update vị trí card trong column sau khi thả
+          if (targetColumn) {
+            targetColumn.cards = dndOrderCards
+            targetColumn.cardOrderIds = dndOrderCards.map(column => column._id)
+          }
+          return nextColumns
+        })
+
+        // kéo thả trong 1 cột
+      } else {
+        const oldCardIndex = oldColumnWhenDragging?.cards.findIndex(r => r._id === activeDragId)
+        const newCardIndex = overColumn?.cards.findIndex(r => r._id === overCardId)
+        const dndOrderCards = changeLocationArray(oldColumnWhenDragging?.cards, newCardIndex, oldCardIndex)
+
+        setOrderedColumnsState(prevColumns => {
+          const nextColumns = cloneDeep(prevColumns)
+          const targetColumn = nextColumns.find(r => r._id === overColumn._id)
+
+          // update vị trí card trong column sau khi thả
+          if (targetColumn) {
+            targetColumn.cards = dndOrderCards
+            targetColumn.cardOrderIds = dndOrderCards.map(column => column._id)
+          }
+          return nextColumns
+        })
+      }
+    }
+
+
+    // xử lí khi thả column
+    if ( activeDragType === ACTIVE_DRAG_IEM_TYPE.COLUMN) {
+      if (active.id !== over.id) {
+        //lây index của 2 column đổi chỗ
+        const oldColumnIndex = orderedColumnsState.findIndex(r => r._id === active.id)
+        const newColumnIndex = orderedColumnsState.findIndex(r => r._id === over.id)
+        const dndOrderColumns = changeLocationArray(orderedColumnsState, newColumnIndex, oldColumnIndex)
+        setOrderedColumnsState(dndOrderColumns)
+      }
     }
 
     setActiveDragId(null)
     setActiveDragType(null)
     setActiveDragData(null)
+    setOldColumnWhenDragging(null)
   }
 
   const dropAnimation = {
