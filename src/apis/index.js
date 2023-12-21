@@ -1,0 +1,8 @@
+import axios from 'axios'
+import { API_ROOT } from '~/utils/constant'
+
+export const fetchBoardDetails_API = async (boardId) => {
+  // ở đây dùng axios nhưng chưa bắt lỗi, đọc thêm về interceptors trong axios catch lỗi tập trung
+  const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`)
+  return response.data
+}

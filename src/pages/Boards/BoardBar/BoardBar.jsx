@@ -26,10 +26,10 @@ export default function BoardBar({ board }) {
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconChip Icon={ <DashboardIcon /> }>
-            {board.title}
+            {board?.title}
           </IconChip>
           <IconChip Icon={ <VpnLockIcon /> }>
-            {capitalizeFirstLetter(board.type)}
+            {capitalizeFirstLetter(board?.type)}
           </IconChip>
           <IconChip Icon={ <AddToDriveIcon /> }>
             Add To Google Drive
