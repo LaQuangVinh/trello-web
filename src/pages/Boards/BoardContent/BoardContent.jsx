@@ -3,13 +3,14 @@ import BoardContentItem from './BoardContentItem'
 import IconChip from '~/components/Chips/IconChip'
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 import { mapOrder } from '~/utils/sorts'
-import { DndContext, useSensor, useSensors, MouseSensor, TouchSensor, DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, rectIntersection, getFirstCollision, closestCenter } from '@dnd-kit/core' //PointerSensor lười thì dùng cái này cho nhanh
+import { DndContext, useSensor, useSensors, MouseSensor, TouchSensor, DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, getFirstCollision } from '@dnd-kit/core' //PointerSensor lười thì dùng cái này cho nhanh
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 // import { arrayMove } from '@dnd-kit/sortable'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { changeLocationArray } from '~/utils/sorts'
 import CardFull from '~/components/Cards/CardFull'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
+import { generatePlaceholderCard } from '~/utils/formatter'
 
 const ACTIVE_DRAG_IEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -93,12 +94,21 @@ export default function BoardContent({ board }) {
         const nextOverColumn = nextColumns.find(column => column._id === overColumn._id)
 
         if (nextActiveColumn) {
-          nextActiveColumn.cards = nextActiveColumn.cards.filter(column => column._id !== activeDraggingCardId)
-          nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(column => column._id)
+          nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+
+          if (isEmpty(nextActiveColumn.cards)) {
+            // card cuối cùng bị kéo đi
+            nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
+          }
+
+          //Xoá cái placeholdersCard
+          nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
+
+          nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
         }
 
         if (nextOverColumn) {
-          nextOverColumn.cards = nextOverColumn.cards.filter(column => column._id !== activeDraggingCardId) //code theo TrungQuanDev chứ dòng này cũng chưa biết để làm gì
+          nextOverColumn.cards = nextOverColumn.cards.filter(card => card._id !== activeDraggingCardId) //code theo TrungQuanDev chứ dòng này cũng chưa biết để làm gì
 
           const reBuild_activeDraggingCardData = {
 
@@ -107,10 +117,12 @@ export default function BoardContent({ board }) {
 
           }
 
+          // thêm card mới vào vị trí mới
           nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, reBuild_activeDraggingCardData)
-          nextOverColumn.cardOrderIds = nextOverColumn.cards.map(column => column._id)
-        }
 
+          //update lại cái để sắp xếp card
+          nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
+        }
         return nextColumns
       })
     }
@@ -202,22 +214,28 @@ export default function BoardContent({ board }) {
       return closestCorners({ ...args })
     }
 
+    // lấy ra các điểm va chạm
     const pointerIntersections = pointerWithin(args)
 
-    const intersections = !!pointerIntersections.length ? pointerIntersections : rectIntersection(args)
+    if (!pointerIntersections.length) {
+      return
+    }
 
-    let overId = getFirstCollision(intersections, 'id')
+    // fix bug https://www.youtube.com/watch?v=a263JPw1iI0&t=587s
+    // const intersections = !!pointerIntersections.length ? pointerIntersections : rectIntersection(args)
+
+    let overId = getFirstCollision(pointerIntersections, 'id')
 
     const checkColumn = orderedColumnsState.find(column => column._id === overId)
     if (overId) {
 
       if (checkColumn) {
-        console.log('aaa', overId);
-        overId = closestCenter({
+        // console.log('aaa', overId);
+        overId = closestCorners({
           ...args,
           droppableContainers: args.droppableContainers.filter(container => container._id !== overId && checkColumn?.cardOrderIds?.includes(container.id))
         })[0]?.id
-        console.log('bbb', overId);
+        // console.log('bbb', overId);
       }
       lastOverId.current = overId
       return [{ id: overId }]

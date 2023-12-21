@@ -23,7 +23,7 @@ export default function CardFull({ card }) {
     opacity: isDragging ? '0.5' : undefined
   }
   const shouldShowCardAction = () => {
-    return !!card?.memberIds.length || !!card?.comments.length || !!card?.attachments.length
+    return !!card?.memberIds?.length || !!card?.comments?.length || !!card?.attachments?.length
   }
   return (
     <Card
@@ -33,7 +33,8 @@ export default function CardFull({ card }) {
       {...listeners}
       sx={{
         maxWidth: 345,
-        overflow: 'unset'
+        overflow: 'unset',
+        display: card?.FE_PlaceholderCard ? 'none' : 'block'
       }}>
       {card?.cover &&
         <CardMedia
