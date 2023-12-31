@@ -10,6 +10,7 @@ import AvatarGroup from '@mui/material/AvatarGroup'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { capitalizeFirstLetter } from '~/utils/formatter'
+import Tooltip from '@mui/material/Tooltip'
 
 export default function BoardBar({ board }) {
   return (
@@ -25,9 +26,13 @@ export default function BoardBar({ board }) {
         bgcolor: (theme) => theme.palette.mode == 'light' ? '#0984e3' : '#2c3e50'
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <IconChip Icon={ <DashboardIcon /> }>
-            {board?.title}
-          </IconChip>
+          <Tooltip title={board?.description}>
+            <div>
+              <IconChip Icon={ <DashboardIcon /> }>
+                {board?.title}
+              </IconChip>
+            </div>
+          </Tooltip>
           <IconChip Icon={ <VpnLockIcon /> }>
             {capitalizeFirstLetter(board?.type)}
           </IconChip>

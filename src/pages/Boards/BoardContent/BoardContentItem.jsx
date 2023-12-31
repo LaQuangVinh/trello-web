@@ -9,10 +9,27 @@ import { mapOrder } from '~/utils/sorts'
 import { useSortable } from '@dnd-kit/sortable'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import CloseIcon from '@mui/icons-material/Close'
+import TextField from '@mui/material/TextField'
+import { useState } from 'react'
 
-const HEADER_FOOTER_COLUMN_HEIGHT = '40px'
+const HEADER_FOOTER_COLUMN_HEIGHT = '50px'
 
 function BoardContentItem({ column }) {
+  const [newCardTitle, setNewCardTitle] = useState('')
+
+  const [openNewCardForm, setOpenNewCardForm] = useState(false)
+  const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
+  const handleAddNewCard = () => {
+    if (newCardTitle.length < 3) {
+      return
+    }
+
+    toggleOpenNewCardForm()
+    setNewCardTitle('')
+  }
+  ////////////////////////////////////////////////
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
@@ -49,7 +66,6 @@ function BoardContentItem({ column }) {
             justifyContent:'space-between',
             alignItems: 'center',
             padding: '10px 10px 10px 10px',
-            borderBottom:(theme) => theme.palette.mode == 'light' ? '1px solid rgba(0, 0, 0, 0.3)' : '1px solid rgba(255, 255, 255, 0.3)',
             '& .MuiSvgIcon-root': {
               color: 'var(--mui-palette-text-primary)'
             }
@@ -62,7 +78,7 @@ function BoardContentItem({ column }) {
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
-          p: '0 5px',
+          p: '0 5px 5px 5px',
           m: '0 5px',
           overflowX: 'hidden',
           overflowY: 'auto !important',
@@ -76,21 +92,103 @@ function BoardContentItem({ column }) {
           </SortableContext>
         </Box>
 
-        <Box sx={{
-          display: 'flex',
-          height: HEADER_FOOTER_COLUMN_HEIGHT,
-          justifyContent:'space-between',
-          alignItems: 'center',
-          padding: '10px 10px 10px 10px',
-          borderTop:(theme) => theme.palette.mode == 'light' ? '1px solid rgba(0, 0, 0, 0.3)' : '1px solid rgba(255, 255, 255, 0.3)',
-          '& .MuiSvgIcon-root': {
-            color: 'var(--mui-palette-text-primary)'
+        <Box
+          sx={{
+            height: HEADER_FOOTER_COLUMN_HEIGHT,
+            padding: '0px 10px 0px 10px',
+            '& .MuiSvgIcon-root': {
+              color: 'var(--mui-palette-text-primary)'
+            }
+          }}>
+          {!openNewCardForm
+            ?
+            <Box
+              onClick={toggleOpenNewCardForm}
+              sx={{
+                height: '100%',
+                display: 'flex',
+                justifyContent:'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <Button startIcon={<AddCardIcon />} sx={{ color: 'var(--mui-palette-text-primary)' }}>
+                <Typography>Add new card</Typography>
+              </Button>
+              <DragHandleIcon />
+            </Box>
+            :
+            <Box sx={{
+              borderRadius: '6px',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1,
+              '& fieldset': {
+                borderColor: (theme) => theme.palette.primary.main,
+                borderRadius: '4px'
+              },
+              '& label': {
+                color: (theme) => theme.palette.text.primary
+              },
+              '& label.Mui-focused': {
+                color: (theme) => theme.palette.primary.main
+              },
+              '& input': {
+                color: (theme) => theme.palette.text.primary,
+                bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#84817a' : 'white'),
+                borderRadius: '4px'
+              },
+              '.MuiOutlinedInput-root': {
+                '&:hover fieldset': {
+                  borderColor: (theme) => theme.palette.primary.main
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: (theme) => theme.palette.primary.main
+                }
+              }
+            }}>
+              <TextField
+                sx={{
+                  minWidth: 120
+                }}
+                label="Enter card title"
+                size="small"
+                type='text'
+                variant='outlined'
+                autoFocus
+                data-no-dnd='true'
+                value={ newCardTitle }
+                onChange={(e) => setNewCardTitle(e.target.value)}
+              />
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                height: '100%'
+              }}>
+                <Button
+                  onClick={handleAddNewCard}
+                  variant='contained' color='success' size='small'
+                  data-no-dnd='true'
+                  sx={{
+                    boxShadow: 'none',
+                    border: '0.5px solid',
+                    borderColor: (theme) => theme.palette.success.main,
+                    '&:hover': { bgcolor: (theme) => theme.palette.success.main }
+                  }}
+                >
+                  Add
+                </Button>
+                <CloseIcon
+                  onClick={toggleOpenNewCardForm}
+                  data-no-dnd='true'
+                  fontSize='small'
+                  sx={{ cursor: 'pointer', color: (theme) => theme.palette.warning.light, '&:hover': { opacity: '0.8' } }}
+                />
+              </Box>
+            </Box>
           }
-        }}>
-          <Button startIcon={<AddCardIcon />} sx={{ color: 'var(--mui-palette-text-primary)' }}>
-            <Typography>Footer</Typography>
-          </Button>
-          <DragHandleIcon />
         </Box>
 
       </Box>

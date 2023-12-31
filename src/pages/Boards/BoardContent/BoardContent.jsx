@@ -3,7 +3,7 @@ import BoardContentItem from './BoardContentItem'
 import IconChip from '~/components/Chips/IconChip'
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 import { mapOrder } from '~/utils/sorts'
-import { DndContext, useSensor, useSensors, MouseSensor, TouchSensor, DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, getFirstCollision } from '@dnd-kit/core' //PointerSensor lười thì dùng cái này cho nhanh
+import { DndContext, useSensor, useSensors, DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, getFirstCollision } from '@dnd-kit/core' //PointerSensor lười thì dùng cái này cho nhanh
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 // import { arrayMove } from '@dnd-kit/sortable'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -11,6 +11,10 @@ import { changeLocationArray } from '~/utils/sorts'
 import CardFull from '~/components/Cards/CardFull'
 import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatter'
+import TextField from '@mui/material/TextField'
+import CloseIcon from '@mui/icons-material/Close'
+import Button from '@mui/material/Button'
+import { MouseSensor, TouchSensor } from '~/customHooks/DndKitSensors'
 
 const ACTIVE_DRAG_IEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -18,7 +22,19 @@ const ACTIVE_DRAG_IEM_TYPE = {
 }
 
 export default function BoardContent({ board }) {
+  const [newColumnTitle, setNewColumnTitle] = useState('')
 
+  const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
+  const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
+  const handleAddNewColumn = () => {
+    if (newColumnTitle.length < 3) {
+      return
+    }
+
+    toggleOpenNewColumnForm()
+    setNewColumnTitle('')
+  }
+  ////////////////////////////////////
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
 
   //tolerance là dung sai cảm ửng ( phân biện tay và bút cảm ứng )
@@ -265,15 +281,97 @@ export default function BoardContent({ board }) {
       }}>
         <SortableContext items={orderedColumnsState.map(c => c._id)} strategy={horizontalListSortingStrategy}>
           {orderedColumnsState?.map(column => <BoardContentItem key={column._id} column={column} />)}
-          <IconChip Icon={ <PlaylistAddIcon /> }>
-              Add New Column
-          </IconChip>
-          <DragOverlay dropAnimation={dropAnimation}>
-            {activeDragType === ACTIVE_DRAG_IEM_TYPE.COLUMN ?
-              <BoardContentItem column={activeDragData} /> :
-              <CardFull card={activeDragData} />
+          <Box onClick={toggleOpenNewColumnForm} sx={{
+            '& fieldset': {
+              borderColor: 'white'
+            },
+            '& label': {
+              color: 'white'
+            },
+            '& label.Mui-focused': {
+              color: 'white'
+            },
+            '& input': {
+              color: 'white'
+            },
+            '.MuiOutlinedInput-root': {
+              '&:hover fieldset': {
+                borderColor: 'white'
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: 'white'
+              }
+            },
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2
+          }}>
+            {!openNewColumnForm
+              ?
+              <>
+                <IconChip sx={{ width: '255px', height: '40px', borderRadius: '8px' }} Icon={ <PlaylistAddIcon /> }>
+                    Add New Column
+                </IconChip>
+                <DragOverlay dropAnimation={dropAnimation}>
+                  {activeDragType === ACTIVE_DRAG_IEM_TYPE.COLUMN ?
+                    <BoardContentItem column={activeDragData} /> :
+                    <CardFull card={activeDragData} />
+                  }
+                </DragOverlay>
+              </>
+              :
+              <>
+                <Box sx={{
+                  minWidth: '250px',
+                  maxWidth: '250px',
+                  mx: 2,
+                  p: 1,
+                  borderRadius: '6px',
+                  height: 'fit-content',
+                  bgcolor: '#ffffff3d',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 1
+                }}>
+                  <TextField
+                    sx={{
+                      minWidth: 120
+                    }}
+                    label="Enter column title"
+                    size="small"
+                    type='text'
+                    variant='outlined'
+                    autoFocus
+                    value={ newColumnTitle }
+                    onChange={(e) => setNewColumnTitle(e.target.value)}
+                  />
+                  <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                  }}>
+                    <Button
+                      onClick={handleAddNewColumn}
+                      variant='contained' color='success' size='small'
+                      sx={{
+                        boxShadow: 'none',
+                        border: '0.5px solid',
+                        borderColor: (theme) => theme.palette.success.main,
+                        '&:hover': { bgcolor: (theme) => theme.palette.success.main }
+                      }}
+                    >
+                      Add column
+                    </Button>
+                    <CloseIcon
+                      onClick={toggleOpenNewColumnForm}
+                      fontSize='small'
+                      sx={{ cursor: 'pointer', color: 'white', '&:hover': { opacity: '0.8' } }}
+                    />
+                  </Box>
+                </Box>
+              </>
             }
-          </DragOverlay>
+          </Box>
         </SortableContext>
       </Box>
     </DndContext>
