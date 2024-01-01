@@ -15,6 +15,7 @@ import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import Button from '@mui/material/Button'
 import { MouseSensor, TouchSensor } from '~/customHooks/DndKitSensors'
+import { toast } from 'react-toastify'
 
 const ACTIVE_DRAG_IEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -28,6 +29,7 @@ export default function BoardContent({ board }) {
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
   const handleAddNewColumn = () => {
     if (newColumnTitle.length < 3) {
+      toast.error('Nhập hơn 3 kí tự')
       return
     }
 
@@ -281,7 +283,7 @@ export default function BoardContent({ board }) {
       }}>
         <SortableContext items={orderedColumnsState.map(c => c._id)} strategy={horizontalListSortingStrategy}>
           {orderedColumnsState?.map(column => <BoardContentItem key={column._id} column={column} />)}
-          <Box onClick={toggleOpenNewColumnForm} sx={{
+          <Box sx={{
             '& fieldset': {
               borderColor: 'white'
             },
@@ -308,7 +310,7 @@ export default function BoardContent({ board }) {
           }}>
             {!openNewColumnForm
               ?
-              <>
+              <Box onClick={toggleOpenNewColumnForm} >
                 <IconChip sx={{ width: '255px', height: '40px', borderRadius: '8px' }} Icon={ <PlaylistAddIcon /> }>
                     Add New Column
                 </IconChip>
@@ -318,7 +320,7 @@ export default function BoardContent({ board }) {
                     <CardFull card={activeDragData} />
                   }
                 </DragOverlay>
-              </>
+              </Box>
               :
               <>
                 <Box sx={{

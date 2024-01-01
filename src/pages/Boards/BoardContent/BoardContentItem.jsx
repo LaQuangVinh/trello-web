@@ -12,6 +12,7 @@ import { CSS } from '@dnd-kit/utilities'
 import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 
 const HEADER_FOOTER_COLUMN_HEIGHT = '50px'
 
@@ -22,6 +23,7 @@ function BoardContentItem({ column }) {
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
   const handleAddNewCard = () => {
     if (newCardTitle.length < 3) {
+      toast.error('Nhập hơn 3 kí tự')
       return
     }
 
