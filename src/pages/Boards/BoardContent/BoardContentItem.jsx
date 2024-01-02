@@ -16,16 +16,23 @@ import { toast } from 'react-toastify'
 
 const HEADER_FOOTER_COLUMN_HEIGHT = '50px'
 
-function BoardContentItem({ column }) {
+function BoardContentItem({ column, createNewCard }) {
   const [newCardTitle, setNewCardTitle] = useState('')
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
-  const handleAddNewCard = () => {
+  const handleAddNewCard = async () => {
     if (newCardTitle.length < 3) {
       toast.error('Nhập hơn 3 kí tự')
       return
     }
+
+    const newCardData = {
+      title: newCardTitle,
+      columnId: column._id
+    }
+
+    await createNewCard(newCardData)
 
     toggleOpenNewCardForm()
     setNewCardTitle('')

@@ -5,7 +5,7 @@ import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 import { mapOrder } from '~/utils/sorts'
 import { DndContext, useSensor, useSensors, DragOverlay, defaultDropAnimationSideEffects, closestCorners, pointerWithin, getFirstCollision } from '@dnd-kit/core' //PointerSensor lười thì dùng cái này cho nhanh
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
-// import { arrayMove } from '@dnd-kit/sortable'
+// import { arrayMove } from '@dnd-kit/sortable' // bị thay thế bởi changeLocationArray vì có bug
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { changeLocationArray } from '~/utils/sorts'
 import CardFull from '~/components/Cards/CardFull'
@@ -22,21 +22,27 @@ const ACTIVE_DRAG_IEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-export default function BoardContent({ board }) {
+export default function BoardContent({ board, createNewColumn, createNewCard }) {
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm)
-  const handleAddNewColumn = () => {
+  const handleAddNewColumn = async () => {
     if (newColumnTitle.length < 3) {
       toast.error('Nhập hơn 3 kí tự')
       return
     }
 
+    const newColumnData = {
+      title: newColumnTitle
+    }
+
+    await createNewColumn(newColumnData)
+
     toggleOpenNewColumnForm()
     setNewColumnTitle('')
   }
-  ////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////
   const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
 
   //tolerance là dung sai cảm ửng ( phân biện tay và bút cảm ứng )
@@ -65,7 +71,7 @@ export default function BoardContent({ board }) {
   }, [board])
 
   const findColumnById = (id) => {
-    return orderedColumnsState.find(c => c?.cards.map(card => card._id)?.includes(id))
+    return orderedColumnsState.find(c => c?.cards.map(card => card?._id)?.includes(id))
   }
 
   //trigger bắt đầu kéo
@@ -112,7 +118,7 @@ export default function BoardContent({ board }) {
         const nextOverColumn = nextColumns.find(column => column._id === overColumn._id)
 
         if (nextActiveColumn) {
-          nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+          nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card?._id !== activeDraggingCardId)
 
           if (isEmpty(nextActiveColumn.cards)) {
             // card cuối cùng bị kéo đi
@@ -122,11 +128,11 @@ export default function BoardContent({ board }) {
           //Xoá cái placeholdersCard
           nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
 
-          nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
+          nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card?._id)
         }
 
         if (nextOverColumn) {
-          nextOverColumn.cards = nextOverColumn.cards.filter(card => card._id !== activeDraggingCardId) //code theo TrungQuanDev chứ dòng này cũng chưa biết để làm gì
+          nextOverColumn.cards = nextOverColumn.cards.filter(card => card?._id !== activeDraggingCardId) //code theo TrungQuanDev chứ dòng này cũng chưa biết để làm gì
 
           const reBuild_activeDraggingCardData = {
 
@@ -139,7 +145,7 @@ export default function BoardContent({ board }) {
           nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, reBuild_activeDraggingCardData)
 
           //update lại cái để sắp xếp card
-          nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
+          nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card?._id)
         }
         return nextColumns
       })
@@ -165,7 +171,7 @@ export default function BoardContent({ board }) {
 
       //kéo thả giữa 2 cột
       if ( oldColumnWhenDragging._id !== overColumn._id) {
-        const oldCardIndex = oldColumnWhenDragging?.cards.findIndex(r => r._id === activeDragId)
+        const oldCardIndex = oldColumnWhenDragging?.cards.findIndex(r => r?._id === activeDragId)
         const newCardIndex = overColumn?.cards.findIndex(r => r._id === overCardId)
         const dndOrderCards = changeLocationArray(overColumn?.cards, newCardIndex, oldCardIndex)
         setOrderedColumnsState(prevColumns => {
@@ -174,7 +180,8 @@ export default function BoardContent({ board }) {
           // update vị trí card trong column sau khi thả
           if (targetColumn) {
             targetColumn.cards = dndOrderCards
-            targetColumn.cardOrderIds = dndOrderCards.map(column => column._id)
+            targetColumn.cards= targetColumn.cards.filter(c => c !== undefined) //dòng này phát sinh khi gặp bug kéo card cuối cùng từ 1 column sang 1 column trống (dùng arrayToMove thì kh có bug này nhưng có bug loạn khi kéo thả)
+            targetColumn.cardOrderIds = dndOrderCards.map(column => column?._id)
           }
           return nextColumns
         })
@@ -282,7 +289,7 @@ export default function BoardContent({ board }) {
         }
       }}>
         <SortableContext items={orderedColumnsState.map(c => c._id)} strategy={horizontalListSortingStrategy}>
-          {orderedColumnsState?.map(column => <BoardContentItem key={column._id} column={column} />)}
+          {orderedColumnsState?.map(column => <BoardContentItem key={column._id} column={column} createNewCard={createNewCard} />)}
           <Box sx={{
             '& fieldset': {
               borderColor: 'white'
