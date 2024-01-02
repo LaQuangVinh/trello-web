@@ -22,7 +22,7 @@ const ACTIVE_DRAG_IEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 }
 
-export default function BoardContent({ board, createNewColumn, createNewCard }) {
+export default function BoardContent({ board, createNewColumn, createNewCard, moveColumns }) {
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
@@ -214,6 +214,9 @@ export default function BoardContent({ board, createNewColumn, createNewCard }) 
         const oldColumnIndex = orderedColumnsState.findIndex(r => r._id === active.id)
         const newColumnIndex = orderedColumnsState.findIndex(r => r._id === over.id)
         const dndOrderColumns = changeLocationArray(orderedColumnsState, newColumnIndex, oldColumnIndex)
+
+        moveColumns(dndOrderColumns)
+
         setOrderedColumnsState(dndOrderColumns)
       }
     }
