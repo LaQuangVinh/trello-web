@@ -13,6 +13,12 @@ export const updateBoardDetails_API = async (boardId, updateData) => {
   return response.data
 }
 
+export const moveCardInTheDifferentColumn_API = async (updateData) => {
+  // ở đây dùng axios nhưng chưa bắt lỗi, đọc thêm về interceptors trong axios catch lỗi tập trung
+  const response = await axios.put(`${API_ROOT}/v1/boards/supports/moving_card`, updateData)
+  return response.data
+}
+
 export const createNewColumn_API = async (newDataColumn) => {
   // ở đây dùng axios nhưng chưa bắt lỗi, đọc thêm về interceptors trong axios catch lỗi tập trung
   const response = await axios.post(`${API_ROOT}/v1/columns`, newDataColumn)
