@@ -3,10 +3,11 @@ import { styled, alpha } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import EditIcon from '@mui/icons-material/Edit'
+import AddBoxIcon from '@mui/icons-material/AddBox'
 import Divider from '@mui/material/Divider'
 import ArchiveIcon from '@mui/icons-material/Archive'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -49,7 +50,7 @@ const StyledMenu = styled((props) => (
   }
 }))
 
-export default function MenuExpand({ children }) {
+export default function MenuExpand({ children, toggleOpenNewCardForm, handleDeleteColumn }) {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
   const handleClick = (event) => {
@@ -82,12 +83,33 @@ export default function MenuExpand({ children }) {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        onClick={handleClose}
       >
-        <MenuItem onClick={handleClose} disableRipple>
-          <EditIcon />
-          Edit
+        <MenuItem
+          sx={{
+            '&:hover': {
+              color: 'success.light'
+            }
+          }}
+          onClick={toggleOpenNewCardForm}
+          disableRipple
+        >
+          <AddBoxIcon />
+          Add new card
         </MenuItem>
         <Divider sx={{ my: 0.5 }} />
+        <MenuItem
+          sx={{
+            '&:hover': {
+              color: 'warning.dark'
+            }
+          }}
+          onClick={handleDeleteColumn}
+          disableRipple
+        >
+          <DeleteIcon />
+          Delete this column
+        </MenuItem>
         <MenuItem onClick={handleClose} disableRipple>
           <ArchiveIcon />
           Archive

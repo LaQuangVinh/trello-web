@@ -31,6 +31,12 @@ export const updateColumnDetails_API = async (columnId, updateData) => {
   return response.data
 }
 
+export const deleteColumnDetails_API = async (columnId) => {
+  // ở đây dùng axios nhưng chưa bắt lỗi, đọc thêm về interceptors trong axios catch lỗi tập trung
+  const response = await axios.delete(`${API_ROOT}/v1/columns/${columnId}`, columnId)
+  return response.data
+}
+
 export const createNewCard_API = async (newDataCard) => {
   // ở đây dùng axios nhưng chưa bắt lỗi, đọc thêm về interceptors trong axios catch lỗi tập trung
   const response = await axios.post(`${API_ROOT}/v1/cards`, newDataCard)

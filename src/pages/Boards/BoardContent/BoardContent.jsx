@@ -27,7 +27,8 @@ export default function BoardContent({
   createNewCard,
   moveColumns,
   moveCardInTheSameColumn,
-  moveCardInTheDifferentColumn
+  moveCardInTheDifferentColumn,
+  deleteColumnDetails
 }) {
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
@@ -298,7 +299,7 @@ export default function BoardContent({
         }
       }}>
         <SortableContext items={orderedColumnsState.map(c => c._id)} strategy={horizontalListSortingStrategy}>
-          {orderedColumnsState?.map(column => <BoardContentItem key={column._id} column={column} createNewCard={createNewCard} />)}
+          {orderedColumnsState?.map(column => <BoardContentItem key={column._id} column={column} createNewCard={createNewCard} deleteColumnDetails={deleteColumnDetails} />)}
           <Box sx={{
             '& fieldset': {
               borderColor: 'white'

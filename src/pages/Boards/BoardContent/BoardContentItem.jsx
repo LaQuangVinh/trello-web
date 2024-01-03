@@ -12,10 +12,11 @@ import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { useConfirm } from 'material-ui-confirm'
 
 const HEADER_FOOTER_COLUMN_HEIGHT = '50px'
 
-function BoardContentItem({ column, createNewCard }) {
+function BoardContentItem({ column, createNewCard, deleteColumnDetails }) {
   const [newCardTitle, setNewCardTitle] = useState('')
 
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
@@ -37,6 +38,18 @@ function BoardContentItem({ column, createNewCard }) {
     setNewCardTitle('')
   }
   ////////////////////////////////////////////////
+
+  const confirmDeleteColumn = useConfirm()
+  const handleDeleteColumn =() => {
+    confirmDeleteColumn({
+      title: 'Delete column ?',
+      description: 'Are you sure you want to delete ?'
+    }).then(() => {
+      deleteColumnDetails(column._id)
+    }).catch(() => {
+
+    })
+  }
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
@@ -79,7 +92,7 @@ function BoardContentItem({ column, createNewCard }) {
             }
           }}>
           <Typography>{column?.title}</Typography>
-          <MenuExpand />
+          <MenuExpand toggleOpenNewCardForm={toggleOpenNewCardForm} handleDeleteColumn={handleDeleteColumn} />
         </Box>
 
         <Box sx={{
