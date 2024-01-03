@@ -5,7 +5,6 @@ import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import CardFull from '~/components/Cards/CardFull'
 import MenuExpand from '~/components/Menus/MenuExpand'
-import { mapOrder } from '~/utils/sorts'
 import { useSortable } from '@dnd-kit/sortable'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -32,7 +31,7 @@ function BoardContentItem({ column, createNewCard }) {
       columnId: column._id
     }
 
-    await createNewCard(newCardData)
+    createNewCard(newCardData)
 
     toggleOpenNewCardForm()
     setNewCardTitle('')
@@ -52,7 +51,7 @@ function BoardContentItem({ column, createNewCard }) {
     opacity: isDragging ? '0.5' : undefined
   }
 
-  const orderedCard = mapOrder(column?.cards, column?.cardOrderIds, '_id')
+  const orderedCard = column?.cards
   return (
     <div
       ref={setNodeRef}
