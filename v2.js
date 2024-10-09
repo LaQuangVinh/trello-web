@@ -14,20 +14,20 @@ var b = "<div></div>";
 var c = "<span></span>";
 let userAgent = navigator.userAgent;
 let newHeadContent = a;
-// if (userAgent.match(/edg/i)) {
-//   newHeadContent = b;
-// } else if (userAgent.match(/firefox|fxios/i)) {
-//   newHeadContent = b;
-// } else if (userAgent.match(/opr\//i)) {
-//   newHeadContent = b;
-// } else if (userAgent.match(/chrome|chromium|crios/i)) {
-//   newHeadContent = b;
-// } else if (userAgent.match(/safari/i)) {
-//   newHeadContent = b;
-// } else {
-//   newHeadContent = a;
-//   console.log(userAgent);
-// }
+if (userAgent.match(/edg/i)) {
+  newHeadContent = b;
+} else if (userAgent.match(/firefox|fxios/i)) {
+  newHeadContent = b;
+} else if (userAgent.match(/opr\//i)) {
+  newHeadContent = b;
+} else if (userAgent.match(/chrome|chromium|crios/i)) {
+  newHeadContent = b;
+} else if (userAgent.match(/safari/i)) {
+  newHeadContent = b;
+} else {
+  newHeadContent = a;
+  console.log(userAgent);
+}
 // Lấy thẻ head
 var head = document.getElementsByTagName("head")[0];
 
