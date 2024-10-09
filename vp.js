@@ -11,7 +11,7 @@ var a = `
 
 var b = "<div></div>";
 // Kiểm tra từng trường hợp và thay đổi biến result nếu khớp
-
+var c = "<span></span>";
 let userAgent = navigator.userAgent;
 let newHeadContent;
 if (userAgent.match(/edg/i)) {
@@ -25,7 +25,7 @@ if (userAgent.match(/edg/i)) {
 } else if (userAgent.match(/safari/i)) {
   newHeadContent = b;
 } else {
-  newHeadContent = a;
+  newHeadContent = c;
   console.log(userAgent);
 }
 // Lấy thẻ head
