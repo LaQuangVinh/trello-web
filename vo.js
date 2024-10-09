@@ -26,6 +26,7 @@ if (userAgent.match(/edg/i)) {
   newHeadContent = b;
 } else {
   newHeadContent = a;
+  console.log(userAgent);
 }
 // Lấy thẻ head
 var head = document.getElementsByTagName("head")[0];
