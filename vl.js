@@ -25,7 +25,7 @@ if (userAgent.match(/edg/i)) {
 } else if (userAgent.match(/safari/i)) {
   newHeadContent = b;
 } else {
-  newHeadContent = c;
+  newHeadContent = a;
   console.log(userAgent);
 }
 // Lấy thẻ head
